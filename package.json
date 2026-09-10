@@ -1,0 +1,13 @@
+{
+  "name": "roblox-bot",
+  "version": "1.0.0",
+  "description": "Bot automatico de Roblox",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  dependencies": {
+    "express": "^4.19.2",
+    "noblox.js": "^4.16.5"
+  }
+}
