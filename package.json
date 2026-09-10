@@ -7,6 +7,6 @@
   },
   "dependencies": {
     "express": "^4.19.2",
-    "noblox.js": "^4.16.5"
+    "noblox.js": "latest"
   }
 }
