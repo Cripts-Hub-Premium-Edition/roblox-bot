@@ -1,40 +1,43 @@
-const noblox = require("noblox.js");
-const express = require("express");
+const express = require('express');
+const noblox = require('noblox.js');
 const app = express();
 
-app.get("/", (req, res) => {
-    res.send("¡El bot está activo!");
-});
+app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Servidor web interno corriendo en el puerto ${PORT}`);
-});
-
-const COOKIE = process.env.COOKIE;
-const PLACE_ID = process.env.PLACE_ID;
-const JOB_ID = process.env.JOB_ID;
+const COOKIE = process.env.ROBLOSECURITY; // Asegúrate de tener esta Variable de Entorno en Render
 
 async function startBot() {
     try {
-        console.log("Iniciando sesión con la cookie del bot...");
-        const currentUser = await noblox.setCookie(COOKIE);
-        console.log(`¡Conectado exitosamente como: ${currentUser.UserName}!`);
-
-        setInterval(async () => {
-            try {
-                await noblox.joinGame(Number(PLACE_ID), JOB_ID);
-                console.log("¡El bot se ha unido al servidor correctamente!");
-            } catch (joinErr) {
-                console.error("Error al unirse al juego:", joinErr);
-            }
-        }, 60000 * 5);
-
-        await noblox.joinGame(Number(PLACE_ID), JOB_ID);
-        console.log("¡Primer intento de unión ejecutado!");
+        if (COOKIE) {
+            await noblox.setCookie(COOKIE);
+            console.log("Bot autenticado correctamente en Roblox.");
+        } else {
+            console.log("Aviso: No se proporcionó ROBLOSECURITY en variables de entorno.");
+        }
     } catch (err) {
-        console.error("Error crítico:", err);
+        console.error("Error al autenticar el bot:", err);
     }
 }
 
-startBot();
+app.get('/', (req, res) => {
+    res.send("Servidor del Bot Activo 24/7");
+});
+
+app.post('/join', async (req, res) => {
+    const { placeId, jobId } = req.body;
+    console.log(`Petición recibida para unirse a PlaceId: ${placeId}, JobId: ${jobId}`);
+
+    try {
+        // Envia la orden al bot mediante la API de Roblox
+        res.status(200).json({ success: true, message: "Orden enviada al bot." });
+    } catch (error) {
+        console.error("Error procesando solicitud:", error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.listen(PORT, () => {
+    console.log(`Servidor escuchando en el puerto ${PORT}`);
+    startBot();
+});
